@@ -32,7 +32,9 @@ export default function WhiteboardCanvas(){
     const draw = (e) => {
         if (!drawing) return;
         if (context) {
-            context.strokeKey = currentStyle.Color;
+            //context do not have any property like strokeKey its strokeStyle and 
+            //currentStyle also don't have Color its color
+            context.strokeStyle = currentStyle.color;
             context.lineWidth = currentStyle.lineWidth;
             context.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
             context.stroke();
