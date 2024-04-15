@@ -4,11 +4,11 @@ export default function WhiteboardCanvas(){
     const canvasRef = useRef(null);
     const [context, setContext] = useState(null);
     const [drawing, setDrawing] = useState(false);
-    const [currentColor, setCurrentColor] = useState("#000000");
+    const [currentColor, setCurrentColor] = useState('black');
     const [lineWidth, setLineWidth] = useState(3);
-    const [drawingActions, setDrawingActions] = useState([]);
+    const [drawingActions, setDrawingActions] = useState([]);   
     const [currentPath, setCurrentPath] = useState([]);
-    const [currentStyle, setCurrentStyle] = useState({color: '#000000', lineWidth: 3});
+    const [currentStyle, setCurrentStyle] = useState({color: 'black', lineWidth: 3});
 
     useEffect(() => {
         if(canvasRef.current){
@@ -24,21 +24,22 @@ export default function WhiteboardCanvas(){
     const startDrawing = (e) => {
         if(context){
             context.beginPath();
-            context.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+            context.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY)    ;
             setDrawing(true);
         }
     };
 
     const draw = (e) => {
-        if (!drawing) return;
-        if (context) {
-            context.strokeKey = currentStyle.Color;
-            context.lineWidth = currentStyle.lineWidth;
-            context.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-            context.stroke();
-            setCurrentPath([...currentPath, {x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY}]);
-        }
+    if (!drawing) return;
+    if (context) {
+        context.strokeStyle = currentStyle.color; // Memperbarui properti warna konteks
+        context.lineWidth = currentStyle.lineWidth;
+        context.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+        context.stroke();
+        setCurrentPath([...currentPath, {x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY}]);
+    }
 }
+
     const endDrawing = () => {
         setDrawing(false);
         context && context.closePath();
@@ -103,8 +104,8 @@ export default function WhiteboardCanvas(){
             <canvas
                 ref={canvasRef}
                 onMouseDown={startDrawing}
-                onMouseUp={endDrawing}
                 onMouseMove={draw}
+                onMouseUp={endDrawing}
                 onMouseOut = {endDrawing}
                 className = 'border border-gray-400'
             />
@@ -113,11 +114,12 @@ export default function WhiteboardCanvas(){
                 <div className='flex justify-center space-x-4'>
                     {['red', 'blue', 'yellow', 'green', 'orange', 'black'].map((color) => (
                         <div
-                        key={color}
-                        className = {`w-8 h-8 rounded-full cursor-pointer ${currentColor === color ? `${color === 'black' ? 'bg-white' : `bg-${color}-700`}` : `${color === 'black' ? 'bg-black' : ` bg-${color}-500`}`}`}
-                        onClick = {() => changeColor(color)}
+                            key={color}
+                            className={`w-8 h-8 rounded-full cursor-pointer ${currentColor === color ? (color === 'black' ? 'bg-white' : `bg-${color}-700`) : (color === 'black' ? 'bg-black' : `bg-${color}-500`)}`}
+                            onClick={() => changeColor(color)}
                         />
                     ))}
+
                 
 
                 </div>
@@ -137,7 +139,8 @@ export default function WhiteboardCanvas(){
                         undo
                 </button>
                 <button className="bg-red-500 text-white px-4 py-2"
-                onClick = {clearDrawing}>
+                onClick = {clearDrawing}
+                >
                         
                         clear
                 </button>
