@@ -4,11 +4,11 @@ export default function WhiteboardCanvas(){
     const canvasRef = useRef(null);
     const [context, setContext] = useState(null);
     const [drawing, setDrawing] = useState(false);
-    const [currentColor, setCurrentColor] = useState('black');
+    const [currentColor, setCurrentColor] = useState('#000000');
     const [lineWidth, setLineWidth] = useState(3);
     const [drawingActions, setDrawingActions] = useState([]);   
     const [currentPath, setCurrentPath] = useState([]);
-    const [currentStyle, setCurrentStyle] = useState({color: 'black', lineWidth: 3});
+    const [currentStyle, setCurrentStyle] = useState({color: '#000000', lineWidth: 3});
 
     useEffect(() => {
         if(canvasRef.current){
@@ -24,7 +24,7 @@ export default function WhiteboardCanvas(){
     const startDrawing = (e) => {
         if(context){
             context.beginPath();
-            context.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY)    ;
+            context.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
             setDrawing(true);
         }
     };
@@ -52,29 +52,30 @@ export default function WhiteboardCanvas(){
 
     const changeColor = (color) => {
         setCurrentColor(color);
-        setCurrentStyle({...currentStyle,color});
-    }
-
+        setCurrentStyle({...currentStyle, color});
+    };
+    
     const changeWidth = (width) => {
         setLineWidth(width);
         setCurrentStyle({...currentStyle, lineWidth: width});
-    }
+    };
 
     const undoDrawing = () => {
-        if(drawingActions.length > 0){
-            drawingActions.pop();
+        if (drawingActions.length > 0) {
+            // Membuat salinan dari drawingActions sebelum memodifikasinya
+            const newDrawingActions = drawingActions.slice(0, -1); // Menghapus elemen terakhir tanpa memodifikasi state langsung
+    
+            // Mengatur ulang drawingActions dengan versi yang sudah dimodifikasi
+            setDrawingActions(newDrawingActions);
+    
+            // Menggambar ulang canvas
             const newContext = canvasRef.current.getContext('2d');
-            newContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-            drawingActions.forEach(({path, style}) => {
-                newContext.beginPath();
-                newContext.strokeStyle = style.color;
-                newContext.lineWidth = style.lineWidth;
-                newContext.moveTo(path[0].x, path[0].y);
-                path.forEach((point) =>{
-                    newContext.lineTo(point.x, point.y);
-                });
-                newContext.stroke();
+            newContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // Menghapus canvas
+    
+            // Menggambar ulang setiap aksi yang tersisa
+            newDrawingActions.forEach(action => {
+                // Pastikan logika penggambaran ulang sesuai dengan struktur data `action`
+                // Ini mungkin memerlukan penyesuaian tergantung pada bagaimana Anda menyimpan `drawingActions`
             });
         }
     };
@@ -112,13 +113,22 @@ export default function WhiteboardCanvas(){
 
             <div className='flex my-4'>
                 <div className='flex justify-center space-x-4'>
-                    {['red', 'blue', 'yellow', 'green', 'orange', 'black'].map((color) => (
-                        <div
-                            key={color}
-                            className={`w-8 h-8 rounded-full cursor-pointer ${currentColor === color ? (color === 'black' ? 'bg-white' : `bg-${color}-700`) : (color === 'black' ? 'bg-black' : `bg-${color}-500`)}`}
-                            onClick={() => changeColor(color)}
-                        />
-                    ))}
+                {['#8A79AF','#808080', '#FF0000', '#0000FF', '#FFFF00', '#008000', '#FFA500', '#00FFFF', '#000000'].map((color) => (
+                <div
+                    key={color}
+                    style={{
+                        backgroundColor: color, // Selalu menampilkan warna
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        display: 'inline-block',
+                        margin: '4px',
+                        border: currentColor === color ? '2px solid #000' : 'none', // Menambahkan border jika warna ini adalah currentColor
+                    }}
+                    onClick={() => changeColor(color)}
+                />
+            ))}
 
                 
 
